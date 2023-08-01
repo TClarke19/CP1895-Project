@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recipes</title>
+</head>
+<body>
+    <h1>Recipes</h1>
+    {% for recipe in recipes %}
+        <div>
+            <img src="{{ url_for('static', filename='images/' + recipe['Image']) }}" width="200" height="200">
+            <h2>Ingredients:</h2>
+            <p>{{ recipe['Ingredients'] }}</p>
+            <h2>Preparation Instructions:</h2>
+            <p>{{ recipe['Preparation'] }}</p>
+            <h2>Serving Instructions:</h2>
+            <p>{{ recipe['Serving'] }}</p>
+            <a href="{{ url_for('remove_recipe', recipe_id=loop.index0) }}">Remove Recipe</a>
+        </div>
+    {% endfor %}
+</body>
+</html>
