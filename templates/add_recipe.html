@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Recipe</title>
+</head>
+<body>
+    <h1>Add a New Recipe</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <form action="{{ url_for('add_recipe') }}" method="post" enctype="multipart/form-data">
+        <label for="image">Image:</label>
+        <input type="file" id="image" name="image" accept="image/*" required><br><br>
+        <label for="ingredients">Ingredients:</label>
+        <textarea id="ingredients" name="ingredients" rows="4" required></textarea><br><br>
+        <label for="preparation">Preparation Instructions:</label>
+        <textarea id="preparation" name="preparation" rows="4" required></textarea><br><br>
+        <label for="serving">Serving Instructions:</label>
+        <textarea id="serving" name="serving" rows="4" required></textarea><br><br>
+        <input type="submit" value="Add Recipe">
+    </form>
+</body>
+</html>
