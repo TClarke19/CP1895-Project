@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Recipes</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
     <h1>Recipes</h1>
     {% for recipe in recipes %}
         <div>
@@ -17,5 +14,4 @@
             <a href="{{ url_for('remove_recipe', recipe_id=loop.index0) }}">Remove Recipe</a>
         </div>
     {% endfor %}
-</body>
-</html>
+{% endblock %}
