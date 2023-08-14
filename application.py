@@ -1,68 +1,106 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
-import pandas as pd
 import os
+from flask import Flask, redirect, url_for, request, render_template
+from forms import RecipeForm
+import pandas as pd
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.secret_key = ""
+app.config['SECRET_KEY'] = ''
+app.config['SUBMITTED_DATA'] = os.path.join('static', 'data_dir','')
+app.config['SUBMITTED_IMG'] = os.path.join('static', 'image_dir','')
 
-# Define the path to the CSV file
-csv_file_path = "recipes.csv"
+@app.route('/')
+def hello_world():
+    """
+    Function to show example instance
+    :return:
+    """
+    return render_template('index.html')
 
-# Load existing recipes from the CSV file into a DataFrame using Pandas
-if os.path.exists(csv_file_path):
-    recipes_df = pd.read_csv(csv_file_path)
-else:
-    recipes_df = pd.DataFrame(columns=["Image", "Ingredients", "Preparation", "Serving"])
-
-# Function to validate image file extensions
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
-
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-
-# Routes
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route("/recipes")
-def display_recipes():
-    return render_template("recipes.html", recipes=recipes_df.to_dict(orient="records"))
-
-@app.route("/add_recipe", methods=["GET", "POST"])
+@app.route('/add_recipe', methods = ['POST', 'GET'])
 def add_recipe():
-    if request.method == "POST":
-        image_file = request.files["image"]
-        ingredients = request.form["ingredients"]
-        preparation = request.form["preparation"]
-        serving = request.form["serving"]
+    """
+    Function add a recipe using a manual form
+    :return:
+    """
+    if request.method == 'POST':
+        add_recipe = request.form['name']
+        print(add_recipe)
+        return "Recipe added successfully"
+    else:
+        return render_template('add_recipe.html')
 
-        if not image_file or not allowed_file(image_file.filename):
-            flash("Please upload a valid image file (png, jpg, jpeg, or gif).", "error")
-            return redirect(url_for("add_recipe"))
+@app.route('/add_beneficiary_auto', methods = ['POST', 'GET'])
+def add_beneficiary_auto():
+    """
+    Function to use inbuilt methods to add a recipe, with file handling
+    :return:
+    """
+    form = RecipeForm()
+    if form.validate_on_submit():
+        recipe_name = form.recipe_name.data
+        ingredients_names = form.ingredients_names.data
+        preparation_inst = form.preparation_inst.data
+        dish_picture = form.dish_picture.data
+        pic_filename = dish_picture.lower().replace(" ", "_") + '.' + secure_filename(form.dish_picture.data.filename).split('.')[-1]
+        form.dish_picture.data.save(os.path.join(app.config['SUBMITTED_IMG'] + pic_filename))
+        df = pd.DataFrame([{'name': recipe_name, 'ing': ingredients_names, 'prep': preparation_inst, 'pic': pic_filename}])
+        df.to_csv(os.path.join(app.config['SUBMITTED_DATA'] + recipe_name.lower().replace(" ", "_") + '.csv'))
+        return redirect(url_for('hello_world'))
+    else:
+        return render_template('add_recipe.html', form=form)
 
-        # Append the new recipe to the DataFrame
-        new_recipe = {
-            "Image": image_file.filename,
-            "Ingredients": ingredients,
-            "Preparation": preparation,
-            "Serving": serving,
-        }
-        recipes_df.loc[len(recipes_df)] = new_recipe
-        recipes_df.to_csv(csv_file_path, index=False)
+@app.route('/admin')
+def hello_admin():
+    """
+    Example for a sample page
+    :return: string
+    """
+    return "Hello Admin"
 
-        flash("Recipe added successfully!", "success")
-        return redirect(url_for("display_recipes"))
+@app.route('/guest/<guest>')
+def hello_guest(guest):
+    """
+    Example for a sample page with variable
+    :param guest: variable
+    :return: String
+    """
+    return "Hello % as Guest" % guest
 
-    return render_template("add_recipe.html")
+@app.route('/user/<user>')
+def hello_user(user):
+    """
+    Function that demonstrates the usage of url for function
+    :param user:
+    :return:
+    """
+    if user=='admin':
+        return redirect(url_for('hello_admin'))
+    else:
+        return redirect(url_for('hello_guest', guest=user))
 
-@app.route("/remove_recipe/<int:recipe_id>")
-def remove_recipe(recipe_id):
-    # Remove the recipe from the DataFrame based on its index
-    recipes_df.drop(index=recipe_id, inplace=True)
-    recipes_df.to_csv(csv_file_path, index=False)
-    flash("Recipe removed successfully!", "success")
-    return redirect(url_for("display_recipes"))
+@app.route('/input', methods = ['POST', 'GET'])
+def information():
+    """
+    Function that demonstrates an example of gathering form info
+    :return:
+    """
+    if request.method == 'POST':
+        info = request.form['info']
+        return redirect(url_for('hello_guest', guest=info))
+    else:
+        return redirect(url_for('hello_world'))
 
-if __name__ == "__main__":
+
+@app.errorhandler(404)
+def page_not_found(e):
+    """
+    Standard error handling mechanism
+    :param e: Error details
+    :return:
+    """
+    return render_template('404.html'), 404
+
+
+if __name__ == '__main__':
     app.run(debug=True)
