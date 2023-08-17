@@ -81,6 +81,27 @@ def remove_recipe():
             return "Recipe not found"
     else:
         return render_template('remove_recipe.html')
+
+
+@app.route('/view_recipe/<recipe_name>')
+def view_recipe(recipe_name):
+    recipes_file = os.path.join(app.root_path, 'recipes.csv')
+    if os.path.exists(recipes_file):
+        df = pd.read_csv(recipes_file)
+        selected_recipe = df[df['name'].str.lower() == recipe_name.lower()]
+        if not selected_recipe.empty:
+            recipe = selected_recipe.iloc[0]
+        else:
+            # Create a default recipe if the requested one is not found
+            recipe = {'name': 'Default Recipe', 'ing': 'Default Ingredients', 'prep': 'Default Instructions',
+                      'pic': 'default.jpg'}
+    else:
+        # If no recipes file exists, create a default recipe
+        recipe = {'name': 'Default Recipe', 'ing': 'Default Ingredients', 'prep': 'Default Instructions',
+                  'pic': 'default.jpg'}
+
+    return render_template('view_recipe.html', recipe=recipe)
+
 #
 # @app.route('/admin')
 # def hello_admin():
