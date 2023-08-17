@@ -5,7 +5,7 @@ import pandas as pd
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = ''
+app.config['SECRET_KEY'] = 'IKUVGGuiyfvYVIvkJBOLUIBOUB89IOUBV98b'
 app.config['SUBMITTED_DATA'] = os.path.join('static', 'data_dir', '')
 app.config['SUBMITTED_IMG'] = os.path.join('static', 'image_dir', '')
 
@@ -92,58 +92,13 @@ def view_recipe(recipe_name):
         if not selected_recipe.empty:
             recipe = selected_recipe.iloc[0]
         else:
-            # Create a default recipe if the requested one is not found
             recipe = {'name': 'Default Recipe', 'ing': 'Default Ingredients', 'prep': 'Default Instructions',
                       'pic': 'default.jpg'}
     else:
-        # If no recipes file exists, create a default recipe
         recipe = {'name': 'Default Recipe', 'ing': 'Default Ingredients', 'prep': 'Default Instructions',
                   'pic': 'default.jpg'}
 
     return render_template('view_recipe.html', recipe=recipe)
-
-#
-# @app.route('/admin')
-# def hello_admin():
-#     """
-#     Example for a sample page
-#     :return: string
-#     """
-#     return "Hello Admin"
-#
-# @app.route('/guest/<guest>')
-# def hello_guest(guest):
-#     """
-#     Example for a sample page with variable
-#     :param guest: variable
-#     :return: String
-#     """
-#     return "Hello %s as Guest" % guest
-#
-# @app.route('/user/<user>')
-# def hello_user(user):
-#     """
-#     Function that demonstrates the usage of url for function
-#     :param user:
-#     :return:
-#     """
-#     if user=='admin':
-#         return redirect(url_for('hello_admin'))
-#     else:
-#         return redirect(url_for('hello_guest', guest=user))
-#
-# @app.route('/input', methods = ['POST', 'GET'])
-# def information():
-#     """
-#     Function that demonstrates an example of gathering form info
-#     :return:
-#     """
-#     if request.method == 'POST':
-#         info = request.form['info']
-#         return redirect(url_for('hello_guest', guest=info))
-#     else:
-#         return redirect(url_for('hello_world'))
-#
 
 @app.errorhandler(404)
 def page_not_found(e):
