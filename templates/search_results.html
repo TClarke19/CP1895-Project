@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Results</title>
+</head>
+<body>
+    <h1>Search Results</h1>
+    {% if results %}
+        {% for result in results %}
+            <h2>{{ result['name'].iloc[0] }}</h2>
+            <img src="{{ url_for('static', filename='image_dir/' + result['pic'].iloc[0]) }}" alt="{{ result['name'].iloc[0] }}">
+            <h3>Ingredients:</h3>
+            <p>{{ result['ing'].iloc[0] }}</p>
+            <h3>Preparation Instructions:</h3>
+            <p>{{ result['prep'].iloc[0] }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+</body>
+</html>

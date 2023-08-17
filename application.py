@@ -30,8 +30,8 @@ def add_recipe():
     else:
         return render_template('add_recipe.html')
 
-@app.route('/add_beneficiary_auto', methods = ['POST', 'GET'])
-def add_beneficiary_auto():
+@app.route('/add_recipe', methods = ['POST', 'GET'])
+def add_recipe():
     """
     Function to use inbuilt methods to add a recipe, with file handling
     :return:
@@ -50,6 +50,38 @@ def add_beneficiary_auto():
     else:
         return render_template('add_recipe.html', form=form)
 
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        query = request.form['query']
+        results = []
+        for file in os.listdir(app.config['SUBMITTED_DATA']):
+            if file.endswith('.csv'):
+                df = pd.read_csv(os.path.join(app.config['SUBMITTED_DATA'], file))
+                if query.lower() in df['name'].iloc[0].lower() or \
+                   query.lower() in df['ing'].iloc[0].lower() or \
+                   query.lower() in df['prep'].iloc[0].lower():
+                    results.append(df)
+        return render_template('search_results.html', results=results)
+    else:
+        return render_template('search.html')
+
+@app.route('/remove_recipe', methods=['GET', 'POST'])
+def remove_recipe():
+    if request.method == 'POST':
+        recipe_name = request.form['recipe_name']
+        recipe_file = os.path.join(app.config['SUBMITTED_DATA'], recipe_name.lower().replace(" ", "_") + '.csv')
+        if os.path.exists(recipe_file):
+            df = pd.read_csv(recipe_file)
+            pic_filename = df['pic'].iloc[0]
+            os.remove(recipe_file)
+            os.remove(os.path.join(app.config['SUBMITTED_IMG'], pic_filename))
+            return "Recipe removed successfully"
+        else:
+            return "Recipe not found"
+    else:
+        return render_template('remove_recipe.html')
+
 @app.route('/admin')
 def hello_admin():
     """
@@ -65,7 +97,7 @@ def hello_guest(guest):
     :param guest: variable
     :return: String
     """
-    return "Hello % as Guest" % guest
+    return "Hello %s as Guest" % guest
 
 @app.route('/user/<user>')
 def hello_user(user):
