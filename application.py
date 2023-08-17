@@ -30,12 +30,8 @@ def add_recipe():
     else:
         return render_template('add_recipe.html')
 
-@app.route('/add_recipe', methods = ['POST', 'GET'])
+@app.route('/add_recipe', methods=['POST', 'GET'])
 def add_recipe():
-    """
-    Function to use inbuilt methods to add a recipe, with file handling
-    :return:
-    """
     form = RecipeForm()
     if form.validate_on_submit():
         recipe_name = form.recipe_name.data
@@ -43,9 +39,13 @@ def add_recipe():
         preparation_inst = form.preparation_inst.data
         dish_picture = form.dish_picture.data
         pic_filename = dish_picture.lower().replace(" ", "_") + '.' + secure_filename(form.dish_picture.data.filename).split('.')[-1]
-        form.dish_picture.data.save(os.path.join(app.config['SUBMITTED_IMG'] + pic_filename))
+        form.dish_picture.data.save(os.path.join(app.config['SUBMITTED_IMG'], pic_filename))
+        recipes_file = os.path.join(app.root_path, 'recipes.csv')
         df = pd.DataFrame([{'name': recipe_name, 'ing': ingredients_names, 'prep': preparation_inst, 'pic': pic_filename}])
-        df.to_csv(os.path.join(app.config['SUBMITTED_DATA'] + recipe_name.lower().replace(" ", "_") + '.csv'))
+        if os.path.exists(recipes_file):
+            df.to_csv(recipes_file, mode='a', header=False, index=False)
+        else:
+            df.to_csv(recipes_file, index=False)
         return redirect(url_for('hello_world'))
     else:
         return render_template('add_recipe.html', form=form)
