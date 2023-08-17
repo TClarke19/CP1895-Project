@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Recipe</title>
-</head>
-<body>
-    <h1>Add a New Recipe</h1>
+{% extends "base.html" %}
+
+{% block page_title %}
+Add Recipe
+{% endblock %}
+
+{% block H1_Description %}
+Add a New Recipe
+{% endblock %}
+
+{% block H1_Content %}
+{% endblock %}
+
+{% block H2_Description %}
+{% endblock %}
+
+{% block H2_Content %}
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <ul>
@@ -25,5 +35,4 @@
         <textarea id="serving" name="serving" rows="4" required></textarea><br><br>
         <input type="submit" value="Add Recipe">
     </form>
-</body>
-</html>
+{% endblock %}

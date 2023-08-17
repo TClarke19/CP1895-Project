@@ -1,14 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Remove Recipe</title>
-</head>
-<body>
-    <h1>Remove Recipe</h1>
+{% extends "base.html" %}
+
+{% block page_title %}
+Remove Recipe
+{% endblock %}
+
+{% block H1_Description %}
+Remove Recipe
+{% endblock %}
+
+{% block H1_Content %}
+{% endblock %}
+
+{% block H2_Description %}
+{% endblock %}
+
+{% block H2_Content %}
     <form action="{{ url_for('remove_recipe') }}" method="post">
         <label for="recipe_name">Recipe Name:</label>
         <input type="text" id="recipe_name" name="recipe_name" required><br><br>
         <input type="submit" value="Remove Recipe">
     </form>
-</body>
-</html>
+{% endblock %}

@@ -26,9 +26,10 @@
                 <h1 class="title">{% block page_title %}{% endblock %}</h1>
                 <nav>
                     <ul>
-                        <li><a href={{ url_for('hello_admin') }}>Admin Portal</a></li>
-                        <li><a href="#">Search</a></li>
-                        <li><a href={{ url_for('add_recipe') }}>Add Info</a></li>
+                        <li><a href="{{ url_for('view_recipe') }}">View Recipes</a></li>
+                        <li><a href="{{ url_for('search') }}">Search Recipes</a></li>
+                        <li><a href="{{ url_for('add_recipe') }}">Add Recipe</a></li>
+                        <li><a href="{{ url_for('remove_recipe') }}">Remove Recipe</a></li>
                     </ul>
                 </nav>
             </header>
